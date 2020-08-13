@@ -1,6 +1,7 @@
 var path = require("path");
 var webpack = require("webpack");
 require("babel-polyfill");
+const HtmlWebpackPlugin = require("vue-html-webpack-plugin");
 
 module.exports = {
   entry: ["babel-polyfill", "./src/main.js"],
@@ -9,6 +10,11 @@ module.exports = {
     publicPath: "/dist/",
     filename: "build.js"
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      vue: true
+    })
+  ],
   module: {
     rules: [
       {
