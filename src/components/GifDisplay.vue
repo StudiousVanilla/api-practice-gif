@@ -1,14 +1,20 @@
 <template>
   <div id="container">
     <div id="gif-container">
-      <img src alt />
+      <img id="gif" v-bind:src="imgSRC" alt />
     </div>
     <div id="search-container">
       <!-- Whatever the user inputs is bound to the variable 'searchTerm'-->
-      <input class="search" type="text" placeholder="cats..." v-model="searchTerm" />
+      <input
+        class="search"
+        type="text"
+        placeholder="cats..."
+        v-model="searchTerm"
+      />
       <!-- Once the button is clicked, the showGif function fetchs data from the giphy api with the 's' (search term) request parameter set to eqaul the 'searchTerm' variable-->
       <button class="btn" v-on:click="showGif(searchTerm)">Gif Me!</button>
     </div>
+    <p>{{ errorMessage }}</p>
   </div>
 </template>
 
@@ -18,12 +24,14 @@ export default {
     return {
       // this variable will be passed to 'showGif' when the button is pressed, altering the URL to whatever is searched for
       searchTerm: "",
+      imgSRC: "",
+      errorMessage: ""
     };
   },
   methods: {
     // 'x' will be the searchTerm variable set by the two way data binding of search input
     async showGif(x) {
-      const img = document.querySelector("img");
+      let img = document.querySelector("#gif");
       try {
         // get response promise from API using 'await' key word
         const response = await fetch(
@@ -35,20 +43,21 @@ export default {
         const catData = await response.json();
 
         // once promise has been resolved, set 'img.src' to the relevant data from the 'catData' object
-        img.src = catData.data.images.original.url;
+        this.imgSRC = await catData.data.images.original.url;
+        this.errorMessage = "";
 
         // Log errors when caught, and show a 'nope' gif to users
       } catch (error) {
+        this.errorMessage = "Netowrk is slow, keep trying!";
         console.log(error);
-        this.showGif("nope");
       }
-    },
+    }
   },
 
   // add an on 'created' function that calls showGif with the 'cat' parameter as a placeholder for  when the page first loads
   mounted() {
     this.showGif("cat");
-  },
+  }
 };
 </script>
 
